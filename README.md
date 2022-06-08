@@ -4,6 +4,19 @@ gofindme is a quick to use webscraping tool to quickly pull down a list of donat
 
 I initially created this tool for use in TraceLabs missing person CTFs as I found GoFundMe campaigns to give lots of leads however manually scrolling through the donations list to populate the full list was time consuming. 
 
+## Installation
+
+```console
+# clone the repo
+$ git clone https://github.com/digitalandrew/gofindme
+
+# change the working directory to gofindme
+$ cd gofindme
+
+# install the requirements
+$ python3 -m pip install -r requirements.txt
+```
+
 ## Usage Example
 
 ```console
