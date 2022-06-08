@@ -1,4 +1,4 @@
-# gofindme - gofundme OSINT tool
+# gofindme - GoFundMe OSINT tool
 
 gofindme is a quick to use webscraping tool to quickly pull down a list of donators and donation amounts from gofundme campaigns.
 
