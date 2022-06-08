@@ -8,7 +8,7 @@ opts, args = getopt.getopt(sys.argv[1:], "c:dfh", ['campaign'])
 
 cflag = False
 dflag = False
-fglag = False
+fflag = False
 
 for opt, arg in opts:
     if opt == '-c':
