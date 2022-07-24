@@ -25,18 +25,51 @@ def main():
             fflag = True
 
         elif opt == '-h':
-            print("\n")
-            print("usage example: gofindme.py -c https://www.gofundme.com/f/digitalandrews-fundraising-campaign -d -f")
-            print("\n")
-            print("-c           Set Campaing URL")
-            print("-d           Show donation amounts in output")
-            print("-f           Write output to CSV file")
+            print("")
+            print("**************************************************")
+            print("               __ _           _         ")
+            print("              / _(_)         | |               ")
+            print("   __ _  ___ | |_ _ _ __   __| |_ __ ___   ___ ")
+            print("  / _` |/ _ \|  _| | '_ \ / _` | '_ ` _ \ / _ \\")
+            print(" | (_| | (_) | | | | | | | (_| | | | | | |  __/")
+            print("  \__, |\___/|_| |_|_| |_|\__,_|_| |_| |_|\___|")
+            print("   __/ |                                       ")
+            print("  |___/     ")
+            print("")
+            print("**************************************************")
+            print("")
+            print("Created by: DigitalAndrew - https://github.com/digitalandrew/gofindme")
+            print("")
+            print("usage example: ")
+            print(
+                " gofindme.py -c https://www.gofundme.com/f/digitalandrews-fundraising-campaign -d -f")
+            print("")
+            print("Options: ")
+            print(" -c           Set Campaign URL")
+            print(" -d           Show donation amounts in output")
+            print(" -f           Write output to CSV file")
             quit()
+    print("")
+    print("**************************************************")
+    print("               __ _           _         ")
+    print("              / _(_)         | |               ")
+    print("   __ _  ___ | |_ _ _ __   __| |_ __ ___   ___ ")
+    print("  / _` |/ _ \|  _| | '_ \ / _` | '_ ` _ \ / _ \\")
+    print(" | (_| | (_) | | | | | | | (_| | | | | | |  __/")
+    print("  \__, |\___/|_| |_|_| |_|\__,_|_| |_| |_|\___|")
+    print("   __/ |                                       ")
+    print("  |___/     ")
+    print("")
+    print("**************************************************")
+    print("")
+    print("Created by: DigitalAndrew - https://github.com/digitalandrew/gofindme")
+    print("")
 
     if cflag == False:
         print("usage: gofindme.py -c campaignstring")
         quit()
-
+    print("Querying Donations for - {}".format(campaign))
+    print("")
     try:
         campaign = campaign[campaign.index('f/') + 2:]
         campaign = campaign[0: campaign.index('?')]
@@ -103,12 +136,18 @@ def main():
         donatorq[i] += "}"
 
     # for each json object change it to dictionary
-    for i in range(len(donatorq)):
-        donatordict = json.loads(donatorq[i])
-        if dflag == True:
-            print(donatordict["name"] + "(" + str(donatordict["amount"]
-                                                  ) + donatordict["currencycode"] + ")")
-        else:
+    if dflag == True:
+        print("{0:35} {1}".format("Donations", "Amount"))
+        print("{0:35} {1}".format("---------", "------"))
+        for i in range(len(donatorq)):
+            donatordict = json.loads(donatorq[i])
+            print("{0:35} {1}".format(donatordict["name"], "(" + str(donatordict["amount"]
+                                                                     ) + donatordict["currencycode"] + ")"))
+    else:
+        print("Donations")
+        print("----------")
+        for i in range(len(donatorq)):
+            donatordict = json.loads(donatorq[i])
             print(donatordict["name"])
 
     if fflag == True:
