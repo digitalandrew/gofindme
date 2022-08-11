@@ -38,12 +38,12 @@ class TestGofindme(unittest.TestCase):
                 "6": "Nicole Testme",
             }
             donations_amounts = {
-                "1": "25.0",
-                "2": "100.0",
-                "3": "15.0",
-                "4": "20.0",
-                "5": "20.0",
-                "6": "100.0",
+                "1": 25.0,
+                "2": 100.0,
+                "3": 15.0,
+                "4": 20.0,
+                "5": 20.0,
+                "6": 100.0,
             }
             api_url = create_api_url(self.test_flags.campaign)
             donations = get_donations(api_url, 5)
