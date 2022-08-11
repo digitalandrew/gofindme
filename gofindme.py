@@ -68,8 +68,8 @@ def get_number_donations(api_url):
     # API request to get counts data which contains total donations
     count_api = "counts"
 
-    request = requests.request(
-        "GET", api_url+count_api, data="", headers="")
+    request = requests.get(
+        api_url+count_api, data="", headers="")
 
     counts = request.text
 
@@ -98,8 +98,8 @@ def get_donations(api_url, number_of_donations):
 
         query_string = {"limit": 100, "offset": (i)*100}
 
-        response = requests.request(
-            "GET", api_url+donations_api, data="", headers="", params=query_string)
+        response = requests.get(
+            api_url+donations_api, data="", headers="", params=query_string)
         partial_donations = response.text
 
         # Remove all characters before the character '[' from string and after ']' to split out json objects
