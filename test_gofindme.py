@@ -49,9 +49,7 @@ class TestGofindme(unittest.TestCase):
             donations = get_donations(api_url, 5)
             for i in range(len(donations)):
                 donations_dict = json.loads(donations[i])
-                print(donations_dict["name"])
                 self.assertEqual(donations_dict["name"], names[str(i + 1)])
-                print(donations_dict["amount"])
                 self.assertEqual(
                     donations_dict["amount"], donations_amounts[str(i + 1)]
                 )
