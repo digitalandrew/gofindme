@@ -1,4 +1,3 @@
-from ast import arg
 import requests
 import json
 import sys
@@ -59,6 +58,7 @@ def print_help():
 
 
 def create_api_url(campaign_url):
+    #Creates the API url from the campagin url, returns string with api url
     try:
         campaign_url = campaign_url[campaign_url.index("f/") + 2 :]
         campaign_url = campaign_url[0 : campaign_url.index("?")]
@@ -71,32 +71,25 @@ def create_api_url(campaign_url):
 
 
 def get_number_donations(api_url):
-    # API request to get counts data which contains total donations
+    # API request to get counts data which contains total donations, returns int of total number of donations
     count_api = "counts"
 
-    request = requests.get(api_url + count_api, data="", headers="")
-
-    counts = request.text
-
-    # clean up response to remove additional unnneded objects
     try:
-        counts = counts[counts.index(":") + 1 :]
-        counts = counts[counts.index(":") + 1 :]
-        counts = counts[0 : counts.index('},"meta"')]
-
-    except ValueError:
-        pass
-    try:
-        counts_dict = json.loads(counts)
-        totaldonations = counts_dict["total_donations"]
+        request = requests.get(api_url + count_api, data="", headers="")
     except:
         print("Cannot find campaign, check campaign url, see -h for help")
         quit()
-    return totaldonations
+    counts = request.text
+
+    counts_dict = json.loads(counts)
+    counts_dict = counts_dict["references"]
+    counts_dict = counts_dict["counts"]
+    return counts_dict["total_donations"]
 
 
 def get_donations(api_url, number_of_donations):
-    donations = ""
+    #Gets all donation info and returns it in a list of dictionaries
+    donations = []
     donations_api = "donations"
 
     # API Request to get donations info (limit of 100 donations per request, must split into multiple requests)
@@ -107,29 +100,14 @@ def get_donations(api_url, number_of_donations):
         response = requests.get(
             api_url + donations_api, data="", headers="", params=query_string
         )
-        partial_donations = response.text
+        partial_donations = json.loads(response.text)
+        partial_donations = partial_donations["references"]
+        partial_donations = partial_donations["donations"]
 
-        # Remove all characters before the character '[' from string and after ']' to split out json objects
-        try:
-            partial_donations = partial_donations[partial_donations.index("[") + 1 :]
-            partial_donations = partial_donations[0 : partial_donations.index("]")]
-        except ValueError:
-            pass
+        donations.append(partial_donations)
+    flat_donations = [item for sublist in donations for item in sublist]
 
-        # if not the last request of donations add comma delimiter
-        if i < int(number_of_donations / 100):
-            partial_donations += ","
-
-        donations += partial_donations
-
-    # split into single json objects on delimiter
-    donations = donations.split("},")
-
-    # Add back in { to complet json object
-    for i in range(len(donations) - 1):
-        donations[i] += "}"
-
-    return donations
+    return flat_donations
 
 
 def print_donations(dflag, donations):
@@ -137,13 +115,12 @@ def print_donations(dflag, donations):
         print("{0:35} {1}".format("Donations", "Amount"))
         print("{0:35} {1}".format("---------", "------"))
         for i in range(len(donations)):
-            donations_dict = json.loads(donations[i])
             print(
                 "{0:35} {1}".format(
-                    donations_dict["name"],
+                    donations[i]["name"],
                     "("
-                    + str(donations_dict["amount"])
-                    + donations_dict["currencycode"]
+                    + str(donations[i]["amount"])
+                    + donations[i]["currencycode"]
                     + ")",
                 )
             )
@@ -151,25 +128,26 @@ def print_donations(dflag, donations):
         print("Donations")
         print("----------")
         for i in range(len(donations)):
-            donations_dict = json.loads(donations[i])
-            print(donations_dict["name"])
+            print(donations[i]["name"])
 
 
 def write_csv(campaign, donations):
-    with open(
-        "{}.csv".format(campaign[campaign.index("f/") + 2 :]), "w+", newline=""
-    ) as file:
+    try:
+        campaign = campaign[campaign.index("f/") + 2 :]
+        campaign = campaign[0 : campaign.index("?")]
+    except ValueError:
+        pass
+    with open("{}.csv".format(campaign), "w+", newline="") as file:
         fieldnames = ["Name", "Amount Donated", "Currency", "Donation Date/Time"]
         csv_writer = csv.DictWriter(file, fieldnames=fieldnames, delimiter=",")
 
         csv_writer.writeheader()
         for i in range(len(donations)):
-            donations_dict = json.loads(donations[i])
             csv_donations_dict = {
-                "Name": donations_dict["name"],
-                "Amount Donated": donations_dict["amount"],
-                "Currency": donations_dict["currencycode"],
-                "Donation Date/Time": donations_dict["created_at"],
+                "Name": donations[i]["name"],
+                "Amount Donated": donations[i]["amount"],
+                "Currency": donations[i]["currencycode"],
+                "Donation Date/Time": donations[i]["created_at"],
             }
             csv_writer.writerow(csv_donations_dict)
 

@@ -1,7 +1,6 @@
 import unittest
 from unittest.mock import patch
 from gofindme import create_api_url, flags, get_donations, get_number_donations
-import json
 
 
 class TestGofindme(unittest.TestCase):
@@ -48,11 +47,8 @@ class TestGofindme(unittest.TestCase):
             api_url = create_api_url(self.test_flags.campaign)
             donations = get_donations(api_url, 5)
             for i in range(len(donations)):
-                donations_dict = json.loads(donations[i])
-                self.assertEqual(donations_dict["name"], names[str(i + 1)])
-                self.assertEqual(
-                    donations_dict["amount"], donations_amounts[str(i + 1)]
-                )
+                self.assertEqual(donations[i]["name"], names[str(i + 1)])
+                self.assertEqual(donations[i]["amount"], donations_amounts[str(i + 1)])
 
 
 if __name__ == "__main__":
